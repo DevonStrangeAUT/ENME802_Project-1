@@ -1,3 +1,4 @@
+%test commit modification
 function [] = display_structure(n_element,ncon,X,Y,U)
 
 for i = 1:n_element
