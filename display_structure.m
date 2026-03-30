@@ -15,11 +15,11 @@ scale = 10000;
 Xd = X + scale * U(1:2:end);
 Yd = Y + scale * U(2:2:end);
 patch('Faces', ncon, 'Vertices', [X Y], ...
-      'FaceColor', 'none', 'EdgeColor', 'k', 'LineStyle', '--');
+    'FaceColor', 'none', 'EdgeColor', 'k', 'LineStyle', '--');
 % Draw deformed shape semi-transparent and scaled for visibility
 patch('Faces', ncon, 'Vertices', [Xd Yd], ...
-      'FaceColor', 'red', 'FaceAlpha', 0.3, ...
-      'EdgeColor', 'r', 'LineWidth', 1.5);
+    'FaceColor', 'red', 'FaceAlpha', 0.3, ...
+    'EdgeColor', 'r', 'LineWidth', 1.5);
 % Label nodes with their indices for reference
 for i = 1:length(X)
     text(X(i), Y(i), sprintf(' %d', i), 'FontSize', 20);

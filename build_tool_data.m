@@ -51,7 +51,7 @@ for i = fixed_nodes
 end
 NDU = length(dzero);
 % area
-A = 1; % placeholder 
+A = 1; % placeholder
 % data matrix
 data = zeros(n_element,14);
 data(1,1) = n_element;

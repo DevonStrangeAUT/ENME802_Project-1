@@ -1,17 +1,17 @@
 function [KE] = pre_processing(i,ncon,X,Y,E,~,t,v)
-  % PRE_PROCESSING - Compute element stiffness matrix for a triangular element
-  %
-  % Input arguments:
-  % i    - element index into connectivity ncon
-  % ncon - connectivity matrix (elements x 3 node indices)
-  % X,Y  - nodal coordinate vectors
-  % E    - Young's modulus
-  % ~    - unused input (placeholder)
-  % t    - element thickness
-  % v    - Poisson's ratio
-  %
-  % Output arguments:
-  % KE   - 6x6 element stiffness matrix
+% PRE_PROCESSING - Compute element stiffness matrix for a triangular element
+%
+% Input arguments:
+% i    - element index into connectivity ncon
+% ncon - connectivity matrix (elements x 3 node indices)
+% X,Y  - nodal coordinate vectors
+% E    - Young's modulus
+% ~    - unused input (placeholder)
+% t    - element thickness
+% v    - Poisson's ratio
+%
+% Output arguments:
+% KE   - 6x6 element stiffness matrix
 global KE;
 n1 = ncon(i,1);
 n2 = ncon(i,2);
@@ -31,14 +31,14 @@ c3 = (x2 - x1);
 A = 0.5 * det([1 x1 y1;
     1 x2 y2;
     1 x3 y3]);
-  % Construct strain-displacement matrix B (constant for linear triangle)
+% Construct strain-displacement matrix B (constant for linear triangle)
 B = (1/(2*A))*[b1 0 b2 0 b3 0
     0 c1 0 c2 0 c3
     c1 b1 c2 b2 c3 b3];
-  % Plane strain constitutive matrix D
+% Plane strain constitutive matrix D
 D = (E/((1+v)*(1-2*v))) * [
     1-v   v     0
     v   1-v     0
     0     0  (1-2*v)/2
-];
+    ];
 KE = t*A*(B.')*D*B;

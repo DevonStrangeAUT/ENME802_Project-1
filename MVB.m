@@ -14,7 +14,7 @@ elements = [
     2 7 6
     3 5 4
     3 6 5
-];
+    ];
 E = 210e9;
 nu = 0.3;
 model = 'plane_strain';
