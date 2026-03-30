@@ -1,27 +1,23 @@
-% Reads External Data
-array = readmatrix('data_structure.xlsx');
-data = array;
+% ===== BUILD DATA (NO EXCEL) =====
+[data, F, dzero, n_nodes, n_element] = build_tool_data();
 
-n_element = data(1,1);
-n_nodes = data(1,2);
+% Extract variables from data
 E = data(1,8);
 A = data(1,9);
-ncon = [data(:,3),data(:,4),data(:,5)];
-X = data(:,6);
-Y = data(:,7);
+ncon = data(1:n_element,3:5);
+X = data(1:n_nodes,6);
+Y = data(1:n_nodes,7);
 NDU = data(1,11);
-dzero = data(:,12);
-F = data(:,10);
 v = data(1,13);
 t = data(1,14);
 
-% Initiate Matricies
+% Initiate Matrices
 KE = zeros(6);
 K = zeros(2*n_nodes);
 
 % Main Routine
 for i=1:n_element
-    % Evaluates Elemental Stiffness Matricies
+    % Evaluates Elemental Stiffness Matrices
     [KE] = pre_processing(i,ncon,X,Y,E,A,t,v);
 
     % Assembles Overall Stiffness Matrix
@@ -51,7 +47,7 @@ KM = K;
 
 [U, Sx, Sy, Sxy] = post_processing(n_element,KM,NDU,dzero,F,ncon,X,Y,E,A,v);
 
-% Outputs Exported To Excel FIles
+% Outputs Exported To Excel Files
 
 dlmwrite('Displacement.xls',U,'')
 dlmwrite('StressX.xls',Sx,'')
@@ -60,6 +56,6 @@ dlmwrite('StressXY.xls',Sxy,'')
 
 % Plots the Initial and Final Structure
 
-display_structure(n_element,ncon,X,Y,U);
+display_structure(n_element,ncon,X,Y,U,F);
 
 

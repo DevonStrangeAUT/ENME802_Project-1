@@ -1,47 +1,38 @@
-%test commit modification
-%test commit modification 2
-%test commit modification 3
-function [] = display_structure(n_element,ncon,X,Y,U)
+function [] = display_structure(~,ncon,X,Y,U,F,dzero)
 
-for i = 1:n_element
-
-n1 = ncon(i,1);
-n2 = ncon(i,2);
-n3 = ncon(i,3);
-
-x1 = X(n1);
-x2 = X(n2);
-x3 = X(n3);
-x4 = x1;
-
-y1 = Y(n1);
-y2 = Y(n2);
-y3 = Y(n3);
-y4 = y1;
-
-u1 = U(2*n1-1);
-v1 = U(2*n1);
-u2 = U(2*n2-1);
-v2 = U(2*n2);
-u3 = U(2*n3-1);
-v3 = U(2*n3);
-
-xf1 = X(n1) + 10000*u1;
-xf2 = X(n2) + 10000*u2;
-xf3 = X(n3) + 10000*u3;
-xf4 = x1;
-
-yf1 = Y(n1) + 10000*v1;
-yf2 = Y(n2) + 10000*v2;
-yf3 = Y(n3) + 10000*v3;
-yf4 = y1;
-
-plot([xf1 xf2 xf3 xf4],[yf1 yf2 yf3 yf4],'LineWidth',5,'Color','red')
+figure;
 hold on;
+axis equal;
 
-plot([x1 x2 x3 x4],[y1 y2 y3 y4],'LineWidth',2);
-hold on;
+scale = 10000;
 
-plot([x1 x2 x3 x4],[y1 y2 y3 y4],'ro');
+Xd = X + scale * U(1:2:end);
+Yd = Y + scale * U(2:2:end);
+
+patch('Faces', ncon, 'Vertices', [X Y], ...
+      'FaceColor', 'none', 'EdgeColor', 'k', 'LineStyle', '--');
+
+patch('Faces', ncon, 'Vertices', [Xd Yd], ...
+      'FaceColor', 'red', 'FaceAlpha', 0.3, ...
+      'EdgeColor', 'r', 'LineWidth', 1.5);
+
+for i = 1:length(X)
+    text(X(i), Y(i), sprintf(' %d', i), 'FontSize', 20);
+end
+
+scale_force = 1e-6;
+for i = 1:length(X)
+    Fx = F(2*i - 1);
+    Fy = F(2*i);
+
+    if Fx ~= 0 || Fy ~= 0
+        quiver(X(i), Y(i), Fx, Fy, scale_force, ...
+            'b', 'LineWidth', 1.5, 'MaxHeadSize', 2);
+    end
+end
+
+fixed_nodes = unique(ceil(dzero/2));
+plot(X(fixed_nodes), Y(fixed_nodes), ...
+    'ks', 'MarkerSize', 8, 'MarkerFaceColor','y');
 
 end
