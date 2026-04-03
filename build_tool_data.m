@@ -71,4 +71,3 @@ for i = 1:n_nodes
     data(i,6) = X(i);
     data(i,7) = Y(i);
 end
-

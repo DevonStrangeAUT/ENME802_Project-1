@@ -21,9 +21,9 @@ patch('Faces', ncon, 'Vertices', [Xd Yd], ...
     'FaceColor', 'red', 'FaceAlpha', 0.3, ...
     'EdgeColor', 'r', 'LineWidth', 1.5);
 % Label nodes with their indices for reference
-for i = 1:length(X)
-    text(X(i), Y(i), sprintf(' %d', i), 'FontSize', 20);
-end
+% for i = 1:length(X)
+%    text(X(i), Y(i), sprintf(' %d', i), 'FontSize', 20);
+% end
 scale_force = 1e-6;
 % Plot applied nodal forces as blue quivers, skip zero forces
 for i = 1:length(X)
