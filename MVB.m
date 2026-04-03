@@ -1,3 +1,4 @@
+% Initialize workspace
 clear; clc;
 nodes = [
     0       0; % cutting point 1
@@ -22,13 +23,13 @@ F = zeros(2*length(nodes),1);
 Fc = 1000;
 Ft = 500;
 cutting_nodes = [1 2];
+% Distribute cutting forces to specified nodes (split evenly)
 for i = cutting_nodes
     F(2*i - 1) = Fc / length(cutting_nodes);
     F(2*i)     = -Ft / length(cutting_nodes);
 end
 fixed_nodes = [5 6 7];
 % apply constraints later in solver
-
 % Check element orientation by computing signed area (positive = CCW)
 for i = 1:size(elements,1)
     n = elements(i,:);

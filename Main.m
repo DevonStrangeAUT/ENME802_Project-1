@@ -44,4 +44,4 @@ dlmwrite('StressX.xls',Sx,'')
 dlmwrite('StressY.xls',Sy,'')
 dlmwrite('StressXY.xls',Sxy,'')
 % Plots the Initial and Final Structure
-display_structure(n_element,ncon,X,Y,U,F);
+display_structure(n_element,ncon,X,Y,U,F,dzero);

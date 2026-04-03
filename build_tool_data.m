@@ -1,12 +1,15 @@
 function [data, F, dzero, n_nodes, n_element] = build_tool_data()
 % BUILDTOOLDATA - Create geometry, material, loads, and BCs for a 2D tool mesh
 %
+% Input arguments:
+%   (none)
+%
 % Output arguments:
-% data      - element/node data matrix used by downstream solver
-% F         - global force vector (2*n_nodes)
-% dzero     - fixed DOF indices
-% n_nodes   - number of nodes
-% n_element - number of elements
+%   data      - element/node data matrix used by downstream solver
+%   F         - global force vector (2*n_nodes)
+%   dzero     - fixed DOF indices
+%   n_nodes   - number of nodes
+%   n_element - number of elements
 % tool geometry, nodal positioning and triangulation
 nodes = [
     0       0;
@@ -34,8 +37,8 @@ v = 0.3;
 t = 1; % thickness - use 1 as we assume unit thickness (this is irrelevant for 2d cases)
 % test loads
 F = zeros(2*n_nodes,1);
-Fc = 1000;
-Ft = 500;
+Fc = 2000;
+Ft = 1000;
 cutting_nodes = [1 2];
 % Distribute concentrated cutting forces to specified nodes
 for i = cutting_nodes
