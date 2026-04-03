@@ -34,8 +34,8 @@ v = 0.3;
 t = 1; % thickness - use 1 as we assume unit thickness (this is irrelevant for 2d cases)
 % test loads
 F = zeros(2*n_nodes,1);
-Fc = 1000;
-Ft = 500;
+Fc = 2000;
+Ft = 3000;
 cutting_nodes = [1 2];
 % Distribute concentrated cutting forces to specified nodes
 for i = cutting_nodes

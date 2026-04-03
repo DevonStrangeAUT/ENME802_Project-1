@@ -18,18 +18,15 @@ function [U,Sx,Sy,Sxy] = post_processing(n_element,KM,NDU,dzero,F,ncon,X,Y,E,~,v
 % Sxy  - element shear stress
 for k = 1:NDU
     n = dzero(k);
+
     KM(n,:) = 0;
-end
-for k = 1:NDU
-    n = dzero(k);
     KM(:,n) = 0;
-end
-for k = 1:NDU
-    n = dzero(k);
-    KM(n,n) = KM(n,n) +1;
+    KM(n,n) = 1;
+
+    F(n) = 0;
 end
 % Solve modified linear system for nodal displacements
-U = inv(KM)*F;
+U = KM \ F;
 for i = 1:n_element
     n1 = ncon(i,1);
     n2 = ncon(i,2);
