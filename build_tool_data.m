@@ -1,5 +1,5 @@
 function [data, F, dzero, n_nodes, n_element] = build_tool_data()
-% BUILDTOOLDATA - Create geometry, material, loads, and BCs for a 2D tool mesh
+% build_tool_data
 %
 % Input arguments:
 %   (none)
@@ -37,10 +37,15 @@ v = 0.3;
 t = 1; % thickness - use 1 as we assume unit thickness (this is irrelevant for 2d cases)
 % test loads
 F = zeros(2*n_nodes,1);
+<<<<<<< Updated upstream
 Fc = 2000;
 Ft = 1000;
+=======
+Fc = 1000;
+Ft = 4000;
+>>>>>>> Stashed changes
 cutting_nodes = [1 2];
-% Distribute concentrated cutting forces to specified nodes
+% distribute concentrated cutting forces to specified nodes
 for i = cutting_nodes
     F(2*i - 1) = Fc / length(cutting_nodes);
     F(2*i)     = -Ft / length(cutting_nodes);
@@ -48,7 +53,7 @@ end
 % boundary condition setup - assume that the tool is held fixed along the bottom
 fixed_nodes = [5 6 7];
 dzero = [];
-% Assemble fixed DOF list (both x and y for each fixed node)
+% assemble fixed DOF list (both x and y for each fixed node)
 for i = fixed_nodes
     dzero = [dzero, 2*i-1, 2*i];
 end

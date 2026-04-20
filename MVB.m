@@ -1,5 +1,8 @@
+<<<<<<< Updated upstream
 % Initialize workspace
 clear; clc;
+=======
+>>>>>>> Stashed changes
 nodes = [
     0       0; % cutting point 1
     0.0005  0; % cutting point 2
@@ -20,7 +23,7 @@ E = 210e9;
 nu = 0.3;
 model = 'plane_strain';
 F = zeros(2*length(nodes),1);
-Fc = 1000;
+Fc = 10000;
 Ft = 500;
 cutting_nodes = [1 2];
 % Distribute cutting forces to specified nodes (split evenly)

@@ -1,5 +1,5 @@
 [data, F, dzero, n_nodes, n_element] = build_tool_data();
-% Extract variables from data
+% extract variables from data
 E = data(1,8);
 A = data(1,9);
 ncon = data(1:n_element,3:5);
@@ -8,15 +8,15 @@ Y = data(1:n_nodes,7);
 NDU = data(1,11);
 v = data(1,13);
 t = data(1,14);
-% Initiate Matrices
+% initiate Matrices
 KE = zeros(6);
 K = zeros(2*n_nodes);
-% Main Routine
-% Loop over elements: form element stiffness and assemble global stiffness
+% main Routine
+% loop over elements: form element stiffness and assemble global stiffness
 for i=1:n_element
-    % Evaluates Elemental Stiffness Matrices
+    % evaluates Elemental Stiffness Matrices
     [KE] = pre_processing(i,ncon,X,Y,E,A,t,v);
-    % Assembles Overall Stiffness Matrix
+    % assembles Overall Stiffness Matrix
     n1 = ncon(i,1);
     n2 = ncon(i,2);
     n3 = ncon(i,3);
@@ -26,7 +26,7 @@ for i=1:n_element
     ROC(4) = (2*n2);
     ROC(5) = (2*n3)-1;
     ROC(6) = (2*n3);
-    % Map element DOFs to global DOFs and add element KE
+    % map element DOFs to global DOFs and add element KE
     for IX = 1:6
         MI = ROC(IX);
         for JX = 1:6
@@ -36,12 +36,17 @@ for i=1:n_element
     end
 end
 KM = K;
-% Calculates Unknown Displacements and Stresses
+% calculates Unknown Displacements and Stresses
 [U, Sx, Sy, Sxy] = post_processing(n_element,KM,NDU,dzero,F,ncon,X,Y,E,A,v);
-% Outputs Exported To Excel Files
+% outputs Exported To Excel Files
 dlmwrite('Displacement.xls',U,'')
 dlmwrite('StressX.xls',Sx,'')
 dlmwrite('StressY.xls',Sy,'')
 dlmwrite('StressXY.xls',Sxy,'')
+<<<<<<< Updated upstream
 % Plots the Initial and Final Structure
 display_structure(n_element,ncon,X,Y,U,F,dzero);
+=======
+% plots the Initial and Final Structure
+display_structure(n_element,ncon,X,Y,U,F);
+>>>>>>> Stashed changes
