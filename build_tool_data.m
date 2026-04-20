@@ -1,18 +1,20 @@
-function [data, F, dzero, n_nodes, n_element] = build_tool_data()
-% build_tool_data
-
-% Input arguments:
-%   (none)
-
+function [ncon, X, Y, F, dzero, n_nodes, n_element, E, v, t, NDU] = build_tool_data()
+% BUILD_TOOL_DATA - Generate geometry, mesh, material properties, loads and BCs
+%
 % Output arguments:
-%   data      - element/node data matrix used by downstream solver
-%   F         - global force vector (2*n_nodes)
-%   dzero     - fixed DOF indices
-%   n_nodes   - number of nodes
-%   n_element - number of elements
-% tool geometry, nodal positioning and triangulation
+% ncon      - element connectivity matrix (n_element x 3)
+% X, Y      - nodal coordinates (column vectors)
+% F         - global force vector (2*n_nodes x 1)
+% dzero     - constrained DOF indices
+% n_nodes   - number of nodes
+% n_element - number of elements
+% E         - Young's modulus (Pa)
+% v         - Poisson's ratio
+% t         - thickness
+% NDU       - number of constrained DOFs
 
-nodes = [
+% Tool boundary vertices (ordered)
+base_nodes = [
     0       0;
     0.0005  0;
     0.006   0;
@@ -20,57 +22,35 @@ nodes = [
     0.0112 -0.004;
     0.006  -0.004;
     0.00078 -0.004
-    ];
+];
 
+% Generate mesh
 grid_density = 0.0005;
-[elements, X, Y] = generate_mesh(nodes, grid_density);
+[ncon, X, Y] = generate_mesh(base_nodes, grid_density);
 n_nodes   = length(X);
-n_element = size(elements, 1);
+n_element = size(ncon, 1);
 
-% material properties
+% Material properties
 E = 210e9;
 v = 0.3;
-t = 1; % thickness - use 1 as we assume unit thickness (this is irrelevant for 2d cases)
+t = 1;
 
-% test loads
-F = zeros(2*n_nodes,1);
+% Force vector
+F  = zeros(2*n_nodes, 1);
 Fc = 2000;
 Ft = 1000;
 cutting_nodes = [1 2];
-
-% distribute concentrated cutting forces to specified nodes
 for i = cutting_nodes
     F(2*i - 1) = Fc / length(cutting_nodes);
     F(2*i)     = -Ft / length(cutting_nodes);
 end
 
-% boundary condition setup - assume that the tool is held fixed along the bottom
-tol = 1e-6;
+% Boundary conditions - find all nodes on the clamped base by coordinate
+tol         = 1e-6;
 fixed_nodes = find(abs(Y - (-0.004)) < tol)';
-dzero = [];
-
-% assemble fixed DOF list (both x and y for each fixed node)
+dzero       = [];
 for i = fixed_nodes
     dzero = [dzero, 2*i-1, 2*i];
 end
 NDU = length(dzero);
-% area
-
-A = 1; % placeholder
-
-% data matrix
-data = zeros(n_element,14);
-data(1,1) = n_element;
-data(1,2) = n_nodes;
-data(1,8) = E;
-data(1,9) = A;
-data(1,11) = NDU;
-data(1,13) = v;
-data(1,14) = t;
-for i = 1:n_element
-    data(i,3:5) = elements(i,:);
-end
-for i = 1:n_nodes
-    data(i,6) = X(i);
-    data(i,7) = Y(i);
 end

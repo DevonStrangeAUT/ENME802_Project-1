@@ -1,24 +1,14 @@
-[data, F, dzero, n_nodes, n_element] = build_tool_data();
+[ncon, X, Y, F, dzero, n_nodes, n_element, E, v, t, NDU] = build_tool_data();
 
-% extract variables from data
-E = data(1,8);
-A = data(1,9);
-ncon = data(1:n_element,3:5);
-X = data(1:n_nodes,6);
-Y = data(1:n_nodes,7);
-NDU = data(1,11);
-v = data(1,13);
-t = data(1,14);
-
-% initiate Matrices
+% Initiate matrices
 KE = zeros(6);
-K = zeros(2*n_nodes);
+K  = zeros(2*n_nodes);
 
 % main Routine
 % loop over elements: form element stiffness and assemble global stiffness
 for i=1:n_element
     % evaluates Elemental Stiffness Matrices
-    [KE] = pre_processing(i,ncon,X,Y,E,A,t,v);
+    [KE] = pre_processing(i, ncon, X, Y, E, [], t, v);
 
     % assembles Overall Stiffness Matrix
     n1 = ncon(i,1);
@@ -44,8 +34,8 @@ end
 
 KM = K;
 
-% calculates Unknown Displacements and Stresses
-[U, Sx, Sy, Sxy] = post_processing(n_element,KM,NDU,dzero,F,ncon,X,Y,E,A,v);
+% Calculates Unknown Displacements, Stresses and Strains
+[U, Sx, Sy, Sxy, Ex, Ey, Gxy] = post_processing(n_element, KM, NDU, dzero, F, ncon, X, Y, E, [], v);
 
 % Outputs Exported To Excel Files
 dlmwrite('Displacement.xls', U,   '')

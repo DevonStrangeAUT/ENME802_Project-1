@@ -16,7 +16,7 @@ bx = boundary_pts(:,1);
 by = boundary_pts(:,2);
 
 
-% Step 2: Seed interior points using a regular grid
+% Seed interior points using a regular grid
 % Generate a grid over the bounding box then keep only points inside polygon
 x_min = min(bx);  x_max = max(bx);
 y_min = min(by);  y_max = max(by);
@@ -30,14 +30,24 @@ in = inpolygon(gx, gy, bx, by);
 interior_x = gx(in);
 interior_y = gy(in);
 
-% Combine boundary and interior points ---
+% Additional interior seeding near the cutting tip for higher density
+tip_x_max = 0.003;
+tip_y_min = -0.004;
+[gx_tip, gy_tip] = meshgrid(x_min:grid_density/2:tip_x_max, tip_y_min:grid_density/2:0);
+gx_tip = gx_tip(:);
+gy_tip = gy_tip(:);
+in_tip = inpolygon(gx_tip, gy_tip, bx, by);
+interior_x = [interior_x; gx_tip(in_tip)];
+interior_y = [interior_y; gy_tip(in_tip)];
+
+% Combine boundary and interior points 
 X = [bx; interior_x];
 Y = [by; interior_y];
 
-% Delaunay triangulation ---
+% Delaunay triangulation 
 tri = delaunay(X, Y);
 
-% Filter triangles outside the tool domain ---
+% Filter triangles outside the tool domain 
 % Compute centroid of each triangle and remove those outside the polygon
 n_tri = size(tri, 1);
 keep  = false(n_tri, 1);
@@ -46,5 +56,16 @@ for i = 1:n_tri
     cy = mean(Y(tri(i,:)));
     keep(i) = inpolygon(cx, cy, bx, by);
 end
+
 ncon = tri(keep, :);
+
+% Ensure all elements have counter-clockwise orientation
+for i = 1:size(ncon,1)
+    A = det([1 X(ncon(i,1)) Y(ncon(i,1));
+        1 X(ncon(i,2)) Y(ncon(i,2));
+        1 X(ncon(i,3)) Y(ncon(i,3))]);
+    if A < 0
+        ncon(i,:) = ncon(i,[1 3 2]);
+    end
+end
 end
