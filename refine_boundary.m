@@ -1,13 +1,14 @@
 function nodes = refine_boundary(base_nodes)
 % REFINE_BOUNDARY - Subdivide polygon edges into specified segment counts
-%
+
 % Input arguments:
 % base_nodes - Nx2 array of polygon vertex coordinates (ordered)
-%
+
 % Output arguments:
 % nodes      - Mx2 array of refined boundary points (closed polygon)
 divisions = [10, 20, 20, 25, 20, 20, 25];
 nodes = [];
+
 for i = 1:length(divisions)
     p1 = base_nodes(i,:);
 
