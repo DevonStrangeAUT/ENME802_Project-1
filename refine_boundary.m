@@ -6,7 +6,7 @@ function nodes = refine_boundary(base_nodes)
 
 % Output arguments:
 % nodes      - Mx2 array of refined boundary points (closed polygon)
-divisions = [10, 20, 20, 25, 20, 20, 25];
+divisions = [30, 5, 5, 10, 10, 15, 15];
 nodes = [];
 
 for i = 1:length(divisions)
