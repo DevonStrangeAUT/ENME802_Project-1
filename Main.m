@@ -4,25 +4,22 @@
 KE = zeros(6);
 K  = zeros(2*n_nodes);
 
-% main Routine
-% loop over elements: form element stiffness and assemble global stiffness
-for i=1:n_element
-    % evaluates Elemental Stiffness Matrices
+% Main Routine
+% Loop over elements: form element stiffness and assemble global stiffness
+for i = 1:n_element
+    % Evaluates Elemental Stiffness Matrices
     [KE] = pre_processing(i, ncon, X, Y, E, [], t, v);
-
-    % assembles Overall Stiffness Matrix
+    % Assembles Overall Stiffness Matrix
     n1 = ncon(i,1);
     n2 = ncon(i,2);
     n3 = ncon(i,3);
-
     ROC(1) = (2*n1)-1;
     ROC(2) = (2*n1);
     ROC(3) = (2*n2)-1;
     ROC(4) = (2*n2);
     ROC(5) = (2*n3)-1;
     ROC(6) = (2*n3);
-
-    % map element DOFs to global DOFs and add element KE
+    % Map element DOFs to global DOFs and add element KE
     for IX = 1:6
         MI = ROC(IX);
         for JX = 1:6
@@ -48,4 +45,3 @@ dlmwrite('StrainXY.xls',     Gxy, '')
 
 % Plots the Initial and Final Structure
 display_structure(n_element, ncon, X, Y, U, F, dzero);
-
