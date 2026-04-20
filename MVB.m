@@ -1,8 +1,5 @@
-<<<<<<< Updated upstream
 % Initialize workspace
 clear; clc;
-=======
->>>>>>> Stashed changes
 nodes = [
     0       0; % cutting point 1
     0.0005  0; % cutting point 2

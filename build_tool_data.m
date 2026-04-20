@@ -37,13 +37,8 @@ v = 0.3;
 t = 1; % thickness - use 1 as we assume unit thickness (this is irrelevant for 2d cases)
 % test loads
 F = zeros(2*n_nodes,1);
-<<<<<<< Updated upstream
 Fc = 2000;
 Ft = 1000;
-=======
-Fc = 1000;
-Ft = 4000;
->>>>>>> Stashed changes
 cutting_nodes = [1 2];
 % distribute concentrated cutting forces to specified nodes
 for i = cutting_nodes
