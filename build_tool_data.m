@@ -1,4 +1,4 @@
-function [ncon, X, Y, F, dzero, n_nodes, n_element, E, v, t, NDU, Fc, Ft] = build_tool_data()
+function [ncon, X, Y, F, dzero, n_nodes, n_element, NDU] = build_tool_data(Fc,Ft,E,v,t)
 % BUILD_TOOL_DATA - Generate geometry, mesh, material properties, loads and BCs
 %
 % Output arguments:
@@ -31,14 +31,9 @@ n_nodes   = length(X);
 n_element = size(ncon, 1);
 
 % Material properties
-E = 210e9;
-v = 0.3;
-t = 1;
 
 % Force vector (N)
 F  = zeros(2*n_nodes, 1);
-Fc = 1500;
-Ft = 4000;
 cutting_nodes = [1 2];
 for i = cutting_nodes
     F(2*i - 1) = Fc / length(cutting_nodes);
