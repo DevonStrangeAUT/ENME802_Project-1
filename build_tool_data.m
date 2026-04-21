@@ -1,4 +1,4 @@
-function [ncon, X, Y, F, dzero, n_nodes, n_element, E, v, t, NDU] = build_tool_data()
+function [ncon, X, Y, F, dzero, n_nodes, n_element, E, v, t, NDU, Fc, Ft] = build_tool_data()
 % BUILD_TOOL_DATA - Generate geometry, mesh, material properties, loads and BCs
 %
 % Output arguments:
