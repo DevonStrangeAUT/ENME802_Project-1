@@ -41,8 +41,11 @@ interior_x = [interior_x; gx_tip(in_tip)];
 interior_y = [interior_y; gy_tip(in_tip)];
 
 % Combine boundary and interior points 
-X = [bx; interior_x];
-Y = [by; interior_y];
+pts = [bx by; interior_x interior_y];
+pts = unique(round(pts,12), 'rows');
+
+X = pts(:,1);
+Y = pts(:,2);
 
 % Delaunay triangulation 
 tri = delaunay(X, Y);
@@ -60,12 +63,27 @@ end
 ncon = tri(keep, :);
 
 % Ensure all elements have counter-clockwise orientation
+clean = [];
+
 for i = 1:size(ncon,1)
-    A = det([1 X(ncon(i,1)) Y(ncon(i,1));
-        1 X(ncon(i,2)) Y(ncon(i,2));
-        1 X(ncon(i,3)) Y(ncon(i,3))]);
-    if A < 0
-        ncon(i,:) = ncon(i,[1 3 2]);
+
+    n = ncon(i,:);
+
+    A = det([1 X(n(1)) Y(n(1));
+             1 X(n(2)) Y(n(2));
+             1 X(n(3)) Y(n(3))]) / 2;
+
+    % Reject zero / tiny area elements
+    if abs(A) < 1e-12
+        continue
     end
+
+    % Fix clockwise orientation
+    if A < 0
+        n = n([1 3 2]);
+    end
+
+    clean = [clean; n];
 end
-end
+
+ncon = clean;

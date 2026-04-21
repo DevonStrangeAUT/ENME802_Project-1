@@ -9,6 +9,10 @@ K  = zeros(2*n_nodes);
 for i = 1:n_element
     % Evaluates Elemental Stiffness Matrices
     [KE] = pre_processing(i, ncon, X, Y, E, [], t, v);
+    if any(isnan(KE(:))) || any(isinf(KE(:)))
+        fprintf('Bad element stiffness at element %d\n', i);
+        disp(ncon(i,:))
+    end
     % Assembles Overall Stiffness Matrix
     n1 = ncon(i,1);
     n2 = ncon(i,2);
