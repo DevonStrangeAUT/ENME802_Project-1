@@ -1,4 +1,4 @@
-function [base_nodes, cutting_nodes, Fc, Ft, fixed_nodes] = custom_geometry()
+function [base_nodes, cutting_nodes, Fc, Ft, fixed_nodes, E, v, t] = custom_geometry()
 % CUSTOM_GEOMETRY - Interactive dialog for user-defined tool geometry
 %
 % Output arguments:
@@ -8,6 +8,7 @@ function [base_nodes, cutting_nodes, Fc, Ft, fixed_nodes] = custom_geometry()
 % Ft             - thrust force magnitude (N)
 % fixed_nodes    - indices of clamped (fixed) nodes
 % Default geometry
+% Default node coordinates used when user cancels or inputs invalid data
 default_nodes = [
     0       0;
     0.0005  0;
@@ -26,6 +27,9 @@ if isempty(answer)
     Fc            = 2000;
     Ft            = 1000;
     fixed_nodes   = [5 6 7];
+    E             = 210e9;
+    v             = 0.3;
+    t             = 1;
     return;
 end
 n_nodes = round(str2double(answer{1}));
@@ -36,6 +40,9 @@ if isnan(n_nodes) || n_nodes < 3
     Fc            = 2000;
     Ft            = 1000;
     fixed_nodes   = [5 6 7];
+    E             = 210e9;
+    v             = 0.3;
+    t             = 1;
     return;
 end
 % Initialize table data from defaults or zeros
@@ -76,11 +83,15 @@ if ~isvalid(fig)
     Fc            = 2000;
     Ft            = 1000;
     fixed_nodes   = [5 6 7];
+    E             = 210e9;
+    v             = 0.3;
+    t             = 1;
     return;
 end
 raw_data   = tbl.Data;
 base_nodes = zeros(n_nodes, 2);
 % Parse table entries to numeric x,y per row
+% Convert string entries to numeric values robustly
 for i = 1:n_nodes
     x_val = raw_data{i, 2};
     y_val = raw_data{i, 3};
@@ -103,6 +114,9 @@ if any(isnan(base_nodes(:)))
     Fc            = 2000;
     Ft            = 1000;
     fixed_nodes   = [5 6 7];
+    E             = 210e9;
+    v             = 0.3;
+    t             = 1;
     return;
 end
 % Ask user for cutting force indices and magnitudes
@@ -117,7 +131,7 @@ if isempty(force_ans)
     Fc = 2000;
     Ft = 1000;
 else
-    cutting_nodes = str2num(force_ans{1}); 
+    cutting_nodes = str2num(force_ans{1});
     Fc            = str2double(force_ans{2});
     Ft            = str2double(force_ans{3});
     % Fall back to defaults if invalid
@@ -128,6 +142,27 @@ else
         Ft = 1000;
     end
 end
+mat_ans = inputdlg( ...
+    {'Young''s Modulus E (Pa):', ...
+    'Poisson''s Ratio v:', ...
+    'Thickness t (m):'}, ...
+    'Material Properties', 1, ...
+    {'210e9', '0.3', '1'});
+if isempty(mat_ans)
+    E = 210e9;
+    v = 0.3;
+    t = 1;
+else
+    E = str2double(mat_ans{1});
+    v = str2double(mat_ans{2});
+    t = str2double(mat_ans{3});
+    if isnan(E) || isnan(v) || isnan(t)
+        warndlg('Invalid material inputs. Using defaults.', 'Warning');
+        E = 210e9;
+        v = 0.3;
+        t = 1;
+    end
+end
 % Ask user for clamped node indices
 fixed_ans = inputdlg( ...
     sprintf('Clamped node indices (e.g. 5, 6, 7)\nAvailable nodes: %s', node_list), ...
@@ -135,7 +170,7 @@ fixed_ans = inputdlg( ...
 if isempty(fixed_ans)
     fixed_nodes = [5 6 7];
 else
-    fixed_nodes = str2num(fixed_ans{1}); 
+    fixed_nodes = str2num(fixed_ans{1});
     if isempty(fixed_nodes)
         warndlg('Invalid fixed node input. Using default nodes 5, 6, 7.', 'Warning');
         fixed_nodes = [5 6 7];

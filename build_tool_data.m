@@ -33,12 +33,24 @@ if nargin >= 2 && ~isempty(varargin)
     Fc            = varargin{3};
     Ft            = varargin{4};
     fixed_nodes   = varargin{5};
+    if nargin >= 8
+        E = varargin{6};
+        v = varargin{7};
+        t = varargin{8};
+    else
+        E = 210e9;
+        v = 0.3;
+        t = 1;
+    end
 else
     base_nodes    = default_nodes;
     cutting_nodes = default_cutting;
     Fc            = default_Fc;
     Ft            = default_Ft;
     fixed_nodes   = default_fixed;
+    E = 210e9;
+    v = 0.3;
+    t = 1;
 end
 % Generate mesh
 % Precompute mesh from polygon vertices using specified grid density
@@ -47,9 +59,7 @@ n_nodes   = length(X);
 n_element = size(ncon, 1);
 % Material properties
 % Set linear elastic material properties and plate thickness
-E = 210e9;
-v = 0.3;
-t = 1;
+% Preallocate global force vector (2 DOF per node)
 F = zeros(2*n_nodes, 1);
 % Find cutting tip nodes by proximity to original vertex coordinates
 % rather than relying on mesh node indices which change after generation
@@ -61,6 +71,7 @@ for k = 1:length(cutting_nodes)
     [~, resolved_cutting_nodes(k)] = min(dist);
 end
 % Distribute specified cutting and traction forces across tip nodes
+% Split forces evenly; vertical traction is negative (downward)
 for i = resolved_cutting_nodes
     F(2*i - 1) = Fc / length(resolved_cutting_nodes);
     F(2*i)     = -Ft / length(resolved_cutting_nodes);
