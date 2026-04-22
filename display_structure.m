@@ -1,46 +1,47 @@
-%test commit modification
-%test commit modification 2
-function [] = display_structure(n_element,ncon,X,Y,U)
+function [] = display_structure(~,ncon,X,Y,U,F,dzero)
+% DISPLAY_STRUCTURE - Cleaner ANSYS-style undeformed/deformed mesh plot
+figure('Color','w','Name','Structure View'); clf;
+ax = axes; hold(ax,'on'); axis(ax,'equal'); box(ax,'on'); grid(ax,'on');
 
-for i = 1:n_element
+% Auto scale deformation
+umag = sqrt(U(1:2:end).^2 + U(2:2:end).^2);
+L = max(max(X)-min(X), max(Y)-min(Y));
+scale = 0.08*L/max(max(umag),eps);
 
-n1 = ncon(i,1);
-n2 = ncon(i,2);
-n3 = ncon(i,3);
+Xd = X + scale*U(1:2:end);
+Yd = Y + scale*U(2:2:end);
 
-x1 = X(n1);
-x2 = X(n2);
-x3 = X(n3);
-x4 = x1;
+% Undeformed mesh (light gray)
+patch(ax,'Faces',ncon,'Vertices',[X Y], ...
+    'FaceColor','none','EdgeColor',[0.75 0.75 0.75], ...
+    'LineStyle','-','LineWidth',0.5);
 
-y1 = Y(n1);
-y2 = Y(n2);
-y3 = Y(n3);
-y4 = y1;
+% Deformed mesh colored by displacement magnitude
+patch(ax,'Faces',ncon,'Vertices',[Xd Yd], ...
+    'FaceVertexCData',umag,'FaceColor','interp', ...
+    'EdgeColor',[0.35 0.35 0.35],'LineWidth',0.6);
+colormap(ax,jet); colorbar(ax);
 
-u1 = U(2*n1-1);
-v1 = U(2*n1);
-u2 = U(2*n2-1);
-v2 = U(2*n2);
-u3 = U(2*n3-1);
-v3 = U(2*n3);
+% Applied forces (only nonzero)
+fnorm = max(abs(F)); if fnorm==0, fnorm = 1; end
+arrowScale = 0.06*L/fnorm;
+for i = 1:length(X)
+    Fx = F(2*i-1); Fy = F(2*i);
+    if abs(Fx)>0 || abs(Fy)>0
+        quiver(ax,X(i),Y(i),Fx,Fy,arrowScale,'b','LineWidth',1.6,'MaxHeadSize',1.8);
+    end
+end
 
-xf1 = X(n1) + 10000*u1;
-xf2 = X(n2) + 10000*u2;
-xf3 = X(n3) + 10000*u3;
-xf4 = x1;
+% Fixed supports
+fixed_nodes = unique(ceil(dzero/2));
+plot(ax,X(fixed_nodes),Y(fixed_nodes),'ks','MarkerFaceColor','y','MarkerSize',6);
 
-yf1 = Y(n1) + 10000*v1;
-yf2 = Y(n2) + 10000*v2;
-yf3 = Y(n3) + 10000*v3;
-yf4 = y1;
-
-plot([xf1 xf2 xf3 xf4],[yf1 yf2 yf3 yf4],'LineWidth',5,'Color','red')
-hold on;
-
-plot([x1 x2 x3 x4],[y1 y2 y3 y4],'LineWidth',2);
-hold on;
-
-plot([x1 x2 x3 x4],[y1 y2 y3 y4],'ro');
-
+xlabel(ax,'X (m)'); ylabel(ax,'Y (m)');
+title(ax,sprintf('Deformed Shape (Scale = %.1fx)',scale));
+legend(ax,{'Undeformed Mesh','Deformed Mesh','Applied Load','Fixed Support'}, ...
+    'Location','bestoutside');
+set(ax,'FontSize',11,'LineWidth',1);
+padding = 0.05*L;
+xlim([min([X;Xd])-padding, max([X;Xd])+padding]);
+ylim([min([Y;Yd])-padding, max([Y;Yd])+padding]);
 end
