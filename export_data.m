@@ -57,6 +57,7 @@ Uy = U(2:2:end);
 Fx = F(1:2:end);
 Fy = F(2:2:end);
 Fixed = false(n_nodes,1);
+% Map constrained DOF indices to node indices and mark as fixed
 Fixed(unique(ceil(dzero/2))) = true;
 NodeTable = table(Node,X,Y,Fx,Fy,Ux,Uy,Fixed,...
     'VariableNames',{'Node','X','Y','Fx','Fy','Ux','Uy','Fixed'});
@@ -71,6 +72,7 @@ ElemTable = table(Elem,n1,n2,n3,Sx,Sy,Sxy,Ex,Ey,Gxy,...
     'VariableNames',{'Element','Node1','Node2','Node3',...
     'StressX','StressY','StressXY','StrainX','StrainY','StrainXY'});
 startRow = n_nodes + 16;
+% Compute starting Excel row for element table after node table
 rangeStr = sprintf('A%d',startRow);
 writetable(ElemTable,filename,'Sheet','Results','Range',rangeStr);
 % Write statistics to xlsx
