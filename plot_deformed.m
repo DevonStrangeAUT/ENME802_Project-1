@@ -11,7 +11,9 @@ function plot_deformed(ax, ncon, X, Y, U, F, dzero)
 cla(ax);
 hold(ax,'on');
 axis(ax,'equal');
-scale = 10000;
+tool_size = max(max(X) - min(X), max(Y) - min(Y));
+umag      = sqrt(U(1:2:end).^2 + U(2:2:end).^2);
+scale     = 0.08 * tool_size / max(max(umag), eps);
 Xd = X + scale * U(1:2:end);
 Yd = Y + scale * U(2:2:end);
 % Original mesh

@@ -6,13 +6,15 @@ function nodes = refine_boundary(base_nodes)
 
 % Output arguments:
 % nodes      - Mx2 array of refined boundary points (closed polygon)
-divisions = [30, 5, 5, 10, 10, 15, 15];
-nodes = [];
+n_edges      = size(base_nodes, 1);
+divisions    = repmat(15, 1, n_edges);
+divisions(1) = 30;  % highest density on cutting tip edge
+nodes = zeros(0, 2);
 
 for i = 1:length(divisions)
     p1 = base_nodes(i,:);
 
-    if i < length(base_nodes)
+    if i < size(base_nodes, 1)
         p2 = base_nodes(i+1,:);
     else
         p2 = base_nodes(1,:); % wrap around
@@ -29,7 +31,7 @@ for i = 1:length(divisions)
     for j = j_range
         t = j / ndiv;
         pt = (1-t)*p1 + t*p2;
-        nodes = [nodes; pt];
+        nodes = [nodes; pt(1) pt(2)];
     end
 end
 end
