@@ -1,4 +1,4 @@
-function [ncon, X, Y, F, dzero, n_nodes, n_element, NDU] = build_tool_data(Fc,Ft,E,v,t)
+function [ncon, X, Y, F, dzero, n_nodes, n_element, NDU] = build_tool_data(Fc,Ft,E,v,t, grid_density)
 % BUILD_TOOL_DATA - Generate geometry, mesh, material properties, loads and BCs
 %
 % Output arguments:
@@ -25,7 +25,7 @@ base_nodes = [
 ];
 
 % Generate mesh
-grid_density = 0.0005;
+
 [ncon, X, Y] = generate_mesh(base_nodes, grid_density);
 n_nodes   = length(X);
 n_element = size(ncon, 1);
