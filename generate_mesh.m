@@ -33,7 +33,7 @@ interior_x = [interior_x; gx_tip(in_tip)];
 interior_y = [interior_y; gy_tip(in_tip)];
 % Combine boundary and interior points
 pts = [bx by; interior_x interior_y];
-% Merge near-duplicate nodes by rounding to numerical tolerance
+% Merge near-duplicate nodes by rounding
 pts = unique(round(pts,12), 'rows');
 X = pts(:,1);
 Y = pts(:,2);
@@ -50,14 +50,13 @@ for i = 1:n_tri
 end
 ncon = tri(keep, :);
 % Ensure all elements have counter-clockwise orientation
-% Drop degenerate triangles and orient remaining triangles CCW
 clean = [];
 for i = 1:size(ncon,1)
     n = ncon(i,:);
     A = det([1 X(n(1)) Y(n(1));
         1 X(n(2)) Y(n(2));
         1 X(n(3)) Y(n(3))]) / 2;
-    % Reject zero / tiny area elements
+    % remove small area elements
     if abs(A) < 1e-12
         continue
     end
